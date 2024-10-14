@@ -249,12 +249,12 @@ def start_scan(adc_settings, csv_path):
             ul.win_buf_free(adc_settings['memhandle'])
 
 
-if __name__ == '__main__':
-    # First, initialize the ADC (this part prepares the device and minimizes latency)
-    adc_settings = initialize_ADC(duration=1)
+# if __name__ == '__main__':
+#     # First, initialize the ADC (this part prepares the device and minimizes latency)
+#     adc_settings = initialize_ADC(duration=1)
 
-    # Once initialized, we can trigger the scan as needed
-    if adc_settings:
-        csv_output_path = 'C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/adc_data.csv'
-        start_scan(adc_settings, csv_output_path)
+#     # Once initialized, we can trigger the scan as needed
+#     if adc_settings:
+#         csv_output_path = 'C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/adc_data.csv'
+#         start_scan(adc_settings, csv_output_path)
 

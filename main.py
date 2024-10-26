@@ -1,19 +1,41 @@
 import pyADC
 import androidCam
 import time
-
+from arduinoComs import setDuty
+import os
 
 
 def main():
 
-    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results"
+    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/3carr/90deg-20G1-300mms"
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+
+    desired_vel = 300
+    slope = 75.1
+    
+    intercept = 4296.74
+    duty = slope * desired_vel + intercept
+    if duty > 32767:
+        duty = 32767
+    # duty = 32767
+    # duty = 6000
+    #At 32767, took 0.067s
+    #At 6000, took 1.12s
+
+    duration = (-3.9339e-5)*duty+1.356 + 2
+
+    print(duty, duration)
 
     # First, initialize the ADC (this part prepares the device and minimizes latency)
-    adc_settings = pyADC.initialize_ADC(duration=1)
+    adc_settings = pyADC.initialize_ADC(duration)
 
     cam = androidCam.Android_Recorder()
     cam.init()
     time.sleep(2) #Wait for camera to start and autofocus
+
+    #Start motor and scanners
+    setDuty(duty)
     cam.Start()
     # Once initialized, we can trigger the scan as needed
     if adc_settings:

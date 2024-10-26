@@ -1,10 +1,40 @@
 clear
 clc
 close all
-% Call the function to play the video and display ADC data with UI controls
-play_video_and_adc('results/', 'results/adc_data.csv');
 
-function play_video_and_adc(folderPath, adcDataFile)
+
+% Specify the start and finish times in seconds
+startTime = 0.0;  % Start at 2 seconds
+finishTime = 2;  % End at 5 seconds
+play_video_and_adc('results/TestRound1/30deg-20G1-100mms/', 'results/TestRound1/30deg-20G1-100mms/adc_data.csv', startTime, finishTime);
+
+% % Specify the start and finish times in seconds
+% startTime = 0.8;  % Start at 2 seconds
+% finishTime = 1.2;  % End at 5 seconds
+% play_video_and_adc('results/30deg-20G1-200mms/', 'results/30deg-20G1-200mms/adc_data.csv', startTime, finishTime);
+
+% % Specify the start and finish times in seconds
+% startTime = 0.8;  % Start at 2 seconds
+% finishTime = 1.2;  % End at 5 seconds
+% play_video_and_adc('results/30deg-20G1-300mms/', 'results/30deg-20G1-300mms/adc_data.csv', startTime, finishTime);
+
+% % Specify the start and finish times in seconds
+% startTime = 1;  % Start at 2 seconds
+% finishTime = 1.4;  % End at 5 seconds
+% play_video_and_adc('results/90deg-30G05-50mms/', 'results/90deg-30G05-50mms/adc_data.csv', startTime, finishTime);
+
+% % Specify the start and finish times in seconds
+% startTime = 0.8;  % Start at 2 seconds
+% finishTime = 1.1;  % End at 5 seconds
+% play_video_and_adc('results/90deg-30G05-200mms/', 'results/90deg-30G05-200mms/adc_data.csv', startTime, finishTime);
+
+% % Specify the start and finish times in seconds
+% startTime = 0.7;  % Start at 2 seconds
+% finishTime = 1;  % End at 5 seconds
+% play_video_and_adc('results/90deg-30G05-300mms/', 'results/90deg-30G05-300mms/adc_data.csv', startTime, finishTime);
+
+
+function play_video_and_adc(folderPath, adcDataFile, startTime, finishTime)
     % Find the first .mp4 file in the given folder
     mp4Files = dir(fullfile(folderPath, '*.mp4'));
     if isempty(mp4Files)
@@ -21,14 +51,41 @@ function play_video_and_adc(folderPath, adcDataFile)
     ch0 = adcData(:, 2);         % Second column: CH0 data
     ch1 = adcData(:, 3);         % Third column: CH1 data
     ch2 = adcData(:, 4);         % Fourth column: CH2 data
+
+    % Number of initial data points to average for zeroing
+    numPointsToZero = 5;
+
+    % Calculate the mean of the first few data points for each axis
+    ch0_offset = mean(ch0(1:numPointsToZero));
+    ch1_offset = mean(ch1(1:numPointsToZero));
+    ch2_offset = mean(ch2(1:numPointsToZero));
+
+    % Subtract the calculated offsets from each channel to zero the data
+    ch0 = ch0 - ch0_offset;
+    ch1 = ch1 - ch1_offset;
+    ch2 = ch2 - ch2_offset;
+
     Fx = ch0.*4; % X-axis
     Fy = ch1.*4; % Y-axis
     Fz = ch2.*4; % Z-axis
+
+    % Filter the ADC data and timestamps to match the start and finish times
+    idx = timestamps >= startTime & timestamps <= finishTime;
+    timestamps = timestamps(idx);
+    Fx = Fx(idx);
+    Fy = Fy(idx);
+    Fz = Fz(idx);
 
     % Set up the video player
     vidObj = VideoReader(videoFile);
     frameRate = vidObj.FrameRate;
     videoDuration = vidObj.Duration;  % Duration of the video in seconds
+
+    % Ensure the finish time is not greater than video duration
+    finishTime = min(finishTime, videoDuration);
+
+    % Set the video starting time
+    vidObj.CurrentTime = startTime;
 
     % Set up the figure for video and ADC plot
     fig = figure('Name', 'Video and ADC Data', 'KeyPressFcn', @keyPressCallback);
@@ -45,12 +102,12 @@ function play_video_and_adc(folderPath, adcDataFile)
     title(hADC, 'ADC Data');
     xlabel('Time (s)');
     ylabel('Force Readings');
-    ylim([-20 20])
+    ylim([-2.5 2.5])
     legend('X-axis (CH0)', 'Y-axis (CH1)', 'Z-axis (CH2)');
 
     % Create a vertical line to indicate the current time in the ADC plot
     hold on;
-    vLine = xline(0, '--k', 'LineWidth', 2);  % Initial position at t=0
+    vLine = xline(startTime, '--k', 'LineWidth', 2);  % Initial position at start time
     hold off;
 
     % Global variable to control playback state
@@ -82,12 +139,15 @@ function play_video_and_adc(folderPath, adcDataFile)
 
             % Update the vertical line on the ADC plot
             currentTime = vidObj.CurrentTime;  % Get the current time of the video
+            if currentTime >= finishTime
+                vidObj.CurrentTime = startTime;  % Loop back to start time
+            end
             set(vLine, 'Value', currentTime);  % Move the vertical line
             drawnow;
         elseif ~hasFrame(vidObj)
             % If the video has ended, loop back to the beginning
-            vidObj.CurrentTime = 0;  % Reset the video to the start
-            set(vLine, 'Value', 0);  % Reset the vertical line to the start
+            vidObj.CurrentTime = startTime;  % Reset the video to the start time
+            set(vLine, 'Value', startTime);  % Reset the vertical line to the start
             playCallback();  % Start playing again
         end
     end
@@ -105,7 +165,7 @@ function play_video_and_adc(folderPath, adcDataFile)
     % Rewind button callback
     function rewindCallback(~, ~)
         % Move the video back by 1 second (adjustable)
-        newTime = max(0, vidObj.CurrentTime - 1);  % Rewind by 1 second, no negative time
+        newTime = max(startTime, vidObj.CurrentTime - 1);  % Rewind by 1 second, no negative time
         vidObj.CurrentTime = newTime;
         % Update the vertical line in the ADC plot
         set(vLine, 'Value', newTime);

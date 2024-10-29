@@ -33,7 +33,7 @@ void loop() {
     // Convert the string to an integer
     int duty = inputString.toInt();
 
-    delay(1500); //Add small delay to give camera and force sensors time to start up
+    delay(2000); //Add small delay to give camera and force sensors time to start up
     // Validate the duty cycle value (-32767 to 32767)
     if (duty < -32767) duty = -32767;
     if (duty > 32767) duty = 32767;
@@ -45,16 +45,16 @@ void loop() {
     Serial.print("Duty cycle set to: ");
     Serial.println(duty);
 
-    delay(5000); //Wait 5 seconds for needle to pierce tissue
+    delay(7000); //Wait 5 seconds for needle to pierce tissue
     //Retract needle
-    duty = -10000;
+    duty = -12000;
     // Send the duty cycle command to the RoboClaw
     roboclaw.DutyM1(address, duty);
-    delay(6000); //Wait for it to retract
+    delay(5000); //Wait for it to retract
   }
 
   // Optional: Add a small delay to prevent overwhelming the loop
-  delay(10);
+  delay(100);
 }
 
 

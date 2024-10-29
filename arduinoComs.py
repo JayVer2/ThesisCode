@@ -15,6 +15,10 @@ def setDuty(duty):
         print(f"Could not open port {arduino_port}")
         exit()
 
+    response = ser.readline().decode('utf-8').strip()
+    if response:
+        print(f"Arduino says: {response}")
+        
     # Send the duty cycle value to the Arduino
     ser.write(f"{duty}\n".encode())  # Send as bytes with a newline character
     print(f"Duty cycle {duty} sent to Arduino.")

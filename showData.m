@@ -6,7 +6,7 @@ close all
 % Specify the start and finish times in seconds
 startTime = 0.0;  % Start at 2 seconds
 finishTime = 2;  % End at 5 seconds
-play_video_and_adc('results/TestRound1/30deg-20G1-100mms/', 'results/TestRound1/30deg-20G1-100mms/adc_data.csv', startTime, finishTime);
+play_video_and_adc('results/test/', 'results/test/adc_data.csv', startTime, finishTime);
 
 % % Specify the start and finish times in seconds
 % startTime = 0.8;  % Start at 2 seconds

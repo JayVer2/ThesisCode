@@ -2,7 +2,7 @@ clear
 close all
 clc
 
-adcDataFile = 'results/TestRound1/30deg-20G1-100mms/adc_data.csv';
+adcDataFile = 'results/humanSkin/90deg-22G1-50/adc_data.csv';
 
 % Load the ADC data from the CSV file
 adcData = readmatrix(adcDataFile);

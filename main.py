@@ -7,15 +7,22 @@ import os
 
 def main():
 
-    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/3carr/90deg-20G1-300mms"
+    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/humanSkin/90deg-22G1-50"
     if not os.path.exists(results_path):
         os.makedirs(results_path)
 
-    desired_vel = 300
-    slope = 75.1
+    time.sleep(5)
+    # desired_vel = 20
+    # slope = 75.1
     
-    intercept = 4296.74
-    duty = slope * desired_vel + intercept
+    # intercept = 4296.74
+    # duty = slope * desired_vel + intercept
+
+    # 20% duty approx 10-30mm/s
+    # 50% duty approx 150mm/s
+    # 100% duty approx 300-400mm/s
+    duty = 0.5 * 32767
+
     if duty > 32767:
         duty = 32767
     # duty = 32767
@@ -23,7 +30,7 @@ def main():
     #At 32767, took 0.067s
     #At 6000, took 1.12s
 
-    duration = (-3.9339e-5)*duty+1.356 + 2
+    duration = (0.0002)*(32767-duty)+2.0
 
     print(duty, duration)
 

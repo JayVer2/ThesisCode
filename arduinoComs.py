@@ -4,7 +4,7 @@ import time
 
 def setDuty(duty):
     arduino_port = 'COM8'
-    baud_rate = 9600  # Must match the Arduino Serial baud rate
+    baud_rate = 9600  
 
     # Initialize serial communication with the Arduino
     try:
@@ -18,7 +18,7 @@ def setDuty(duty):
     response = ser.readline().decode('utf-8').strip()
     if response:
         print(f"Arduino says: {response}")
-        
+
     # Send the duty cycle value to the Arduino
     ser.write(f"{duty}\n".encode())  # Send as bytes with a newline character
     print(f"Duty cycle {duty} sent to Arduino.")

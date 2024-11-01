@@ -142,10 +142,6 @@ class Android_Recorder():
 
 
 
-
-
-
-
 # if __name__ == '__main__':
 #     pass
     # Android_Recorder(results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results")

@@ -7,7 +7,7 @@ import os
 
 def main():
 
-    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/humanSkin/90deg-22G1-50"
+    results_path="C:/Users/jgver/Documents/University/Thesis/ThesisCode/results/humanSkinTest2/90deg-24G1-25"
     if not os.path.exists(results_path):
         os.makedirs(results_path)
 
@@ -21,7 +21,7 @@ def main():
     # 20% duty approx 10-30mm/s
     # 50% duty approx 150mm/s
     # 100% duty approx 300-400mm/s
-    duty = 0.5 * 32767
+    duty = 0.25 * 32767
 
     if duty > 32767:
         duty = 32767
